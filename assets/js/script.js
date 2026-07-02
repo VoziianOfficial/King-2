@@ -3,7 +3,8 @@
 const GOOGLE_SCRIPT_URL = 'PASTE_CLIENT_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
 const FINAL_CTA_URL = 'PASTE_CLIENT_FINAL_CTA_URL_HERE';
 const LOADING_DURATION = 3000;
-const QUESTION_TRANSITION_DELAY = 180;
+const QUESTION_TRANSITION_DELAY = 220;
+const QUESTION_EXIT_DURATION = 180;
 const REDUCED_MOTION_LOADING_DURATION = 250;
 const LOADING_STATUS_INTERVAL = 800;
 const LOADING_STATUS_MESSAGES = [
@@ -187,20 +188,81 @@ function handleAnswerClick(questionId, answer) {
 
     if (!isLastQuestion) {
         window.setTimeout(() => {
-            currentStep += 1;
-            isTransitioning = false;
-            renderQuestion(true);
+            transitionToNextQuestion();
         }, prefersReducedMotion ? 0 : QUESTION_TRANSITION_DELAY);
 
         return;
     }
 
     void submitSurveyData();
-    showLoadingScreen();
 
     window.setTimeout(() => {
-        showFinalScreen();
-    }, prefersReducedMotion ? REDUCED_MOTION_LOADING_DURATION : LOADING_DURATION);
+        transitionToLoadingScreen();
+    }, prefersReducedMotion ? 0 : QUESTION_TRANSITION_DELAY);
+}
+
+function transitionToNextQuestion() {
+    const quizRoot = document.getElementById('quiz-root');
+
+    if (!quizRoot || prefersReducedMotion) {
+        currentStep += 1;
+        isTransitioning = false;
+        renderQuestion(true);
+        return;
+    }
+
+    const currentView = quizRoot.querySelector('.quiz-view');
+
+    if (!currentView) {
+        currentStep += 1;
+        isTransitioning = false;
+        renderQuestion(true);
+        return;
+    }
+
+    currentView.classList.add('is-exiting');
+
+    window.setTimeout(() => {
+        currentStep += 1;
+        isTransitioning = false;
+        renderQuestion(true);
+    }, QUESTION_EXIT_DURATION);
+}
+
+function transitionToLoadingScreen() {
+    const quizRoot = document.getElementById('quiz-root');
+
+    if (!quizRoot || prefersReducedMotion) {
+        showLoadingScreen();
+
+        window.setTimeout(() => {
+            showFinalScreen();
+        }, prefersReducedMotion ? REDUCED_MOTION_LOADING_DURATION : LOADING_DURATION);
+
+        return;
+    }
+
+    const currentView = quizRoot.querySelector('.quiz-view');
+
+    if (!currentView) {
+        showLoadingScreen();
+
+        window.setTimeout(() => {
+            showFinalScreen();
+        }, LOADING_DURATION);
+
+        return;
+    }
+
+    currentView.classList.add('is-exiting');
+
+    window.setTimeout(() => {
+        showLoadingScreen();
+
+        window.setTimeout(() => {
+            showFinalScreen();
+        }, LOADING_DURATION);
+    }, QUESTION_EXIT_DURATION);
 }
 
 function showLoadingScreen() {

@@ -376,11 +376,13 @@ svg {
     flex-direction: column;
     width: 100%;
     min-height: 100%;
-    animation: contentIn 280ms var(--ease-premium) both;
+    animation: contentIn 360ms var(--ease-premium) both;
+    will-change: opacity, transform, filter;
 }
 
 .quiz-view.is-exiting {
-    animation: contentOut 220ms ease both;
+    pointer-events: none;
+    animation: contentOut 180ms cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 .step-area {
@@ -644,7 +646,7 @@ svg {
 }
 
 .answer-button.is-selected.is-pulsing {
-    animation: answerSelectedPulse 420ms var(--ease-premium) both;
+    animation: answerSelectedPulse 260ms var(--ease-premium) both;
 }
 
 .answer-button:disabled {
@@ -1204,13 +1206,13 @@ svg {
 @keyframes contentIn {
     0% {
         opacity: 0;
-        transform: translateY(12px);
-        filter: blur(5px);
+        transform: translateY(10px) scale(0.992);
+        filter: blur(6px);
     }
 
     100% {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
         filter: blur(0);
     }
 }
@@ -1218,13 +1220,13 @@ svg {
 @keyframes contentOut {
     0% {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
         filter: blur(0);
     }
 
     100% {
         opacity: 0;
-        transform: translateY(-8px);
+        transform: translateY(-6px) scale(0.992);
         filter: blur(5px);
     }
 }
