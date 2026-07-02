@@ -3,8 +3,14 @@
 const GOOGLE_SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
 const FINAL_CTA_URL = '#';
 const LOADING_DURATION = 3000;
-const QUESTION_TRANSITION_DELAY = 420;
+const QUESTION_TRANSITION_DELAY = 180;
 const REDUCED_MOTION_LOADING_DURATION = 250;
+const LOADING_STATUS_INTERVAL = 800;
+const LOADING_STATUS_MESSAGES = [
+    'Yanıtlarınız analiz ediliyor...',
+    'Tercihleriniz eşleştiriliyor...',
+    'Kişisel ekran hazırlanıyor...'
+];
 
 const questions = [
     {
@@ -42,6 +48,7 @@ const questions = [
 let currentStep = 0;
 const answers = {};
 let isTransitioning = false;
+let loadingStatusTimer = null;
 
 const prefersReducedMotion = typeof window.matchMedia === 'function'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -54,6 +61,7 @@ function initSurvey() {
     }
 
     renderQuestion(false);
+    initPremiumInteractions();
 }
 
 function renderQuestion(shouldMoveFocus) {
@@ -166,7 +174,7 @@ function handleAnswerClick(questionId, answer) {
         button.disabled = true;
 
         if (button.getAttribute('data-answer-id') === answer.id) {
-            button.classList.add('is-selected');
+            button.classList.add('is-selected', 'is-pulsing');
             button.setAttribute('aria-pressed', 'true');
         } else {
             button.setAttribute('aria-pressed', 'false');
@@ -209,6 +217,10 @@ function showLoadingScreen() {
 
             <h2 class="loading-title" tabindex="-1">Sizin için en iyi teklifi hazırlıyoruz...</h2>
 
+            <p class="loading-status" aria-live="polite" aria-atomic="true">
+                ${LOADING_STATUS_MESSAGES[0]}
+            </p>
+
             <div class="loading-progress" aria-hidden="true">
                 <div class="loading-progress__fill"></div>
             </div>
@@ -218,6 +230,7 @@ function showLoadingScreen() {
     window.requestAnimationFrame(() => {
         quizRoot.setAttribute('aria-busy', 'false');
     });
+    startLoadingStatusUpdates(quizRoot);
     focusViewHeading(quizRoot);
 }
 
@@ -227,6 +240,8 @@ function showFinalScreen() {
     if (!quizRoot) {
         return;
     }
+
+    clearLoadingStatusTimer();
 
     const safeFinalUrl = getSafeHttpUrl(FINAL_CTA_URL);
     const ctaMarkup = safeFinalUrl
@@ -246,6 +261,8 @@ function showFinalScreen() {
                 </svg>
             </div>
 
+            <div class="final-light-sweep" aria-hidden="true"></div>
+
             <h2 class="final-title" tabindex="-1">Teşekkürler!</h2>
 
             <p class="final-text">
@@ -257,6 +274,154 @@ function showFinalScreen() {
     `;
 
     focusViewHeading(quizRoot);
+}
+
+function startLoadingStatusUpdates(root) {
+    clearLoadingStatusTimer();
+
+    if (prefersReducedMotion) {
+        return;
+    }
+
+    let messageIndex = 0;
+
+    loadingStatusTimer = window.setInterval(() => {
+        const status = root.querySelector('.loading-status');
+
+        if (!status) {
+            clearLoadingStatusTimer();
+            return;
+        }
+
+        messageIndex += 1;
+
+        if (messageIndex >= LOADING_STATUS_MESSAGES.length) {
+            clearLoadingStatusTimer();
+            return;
+        }
+
+        status.textContent = LOADING_STATUS_MESSAGES[messageIndex];
+
+        if (messageIndex === LOADING_STATUS_MESSAGES.length - 1) {
+            clearLoadingStatusTimer();
+        }
+    }, LOADING_STATUS_INTERVAL);
+}
+
+function clearLoadingStatusTimer() {
+    if (loadingStatusTimer === null) {
+        return;
+    }
+
+    window.clearInterval(loadingStatusTimer);
+    loadingStatusTimer = null;
+}
+
+function initPremiumInteractions() {
+    const desktopPointerQuery = typeof window.matchMedia === 'function'
+        ? window.matchMedia('(min-width: 1024px) and (hover: hover) and (pointer: fine)')
+        : null;
+    const hasTouchInput = navigator.maxTouchPoints > 0;
+
+    if (prefersReducedMotion || hasTouchInput || !desktopPointerQuery || !desktopPointerQuery.matches) {
+        return;
+    }
+
+    document.documentElement.classList.add('has-premium-pointer');
+    initMouseReactiveBackground(desktopPointerQuery);
+    initCardTilt(desktopPointerQuery);
+}
+
+function initMouseReactiveBackground(desktopPointerQuery) {
+    const root = document.documentElement;
+    let frameId = null;
+    let pointerX = window.innerWidth / 2;
+    let pointerY = window.innerHeight / 2;
+
+    const updateScene = () => {
+        frameId = null;
+
+        if (!desktopPointerQuery.matches) {
+            return;
+        }
+
+        const normalizedX = (pointerX / window.innerWidth) - 0.5;
+        const normalizedY = (pointerY / window.innerHeight) - 0.5;
+
+        root.style.setProperty('--scene-glow-x', `${(normalizedX * 20).toFixed(2)}px`);
+        root.style.setProperty('--scene-glow-y', `${(normalizedY * 14).toFixed(2)}px`);
+        root.style.setProperty('--scene-watermark-x', `${(normalizedX * -12).toFixed(2)}px`);
+        root.style.setProperty('--scene-watermark-y', `${(normalizedY * -8).toFixed(2)}px`);
+    };
+
+    const requestSceneUpdate = (event) => {
+        pointerX = event.clientX;
+        pointerY = event.clientY;
+
+        if (frameId === null) {
+            frameId = window.requestAnimationFrame(updateScene);
+        }
+    };
+
+    const resetScene = () => {
+        root.style.setProperty('--scene-glow-x', '0px');
+        root.style.setProperty('--scene-glow-y', '0px');
+        root.style.setProperty('--scene-watermark-x', '0px');
+        root.style.setProperty('--scene-watermark-y', '0px');
+    };
+
+    window.addEventListener('mousemove', requestSceneUpdate, { passive: true });
+    document.documentElement.addEventListener('mouseleave', resetScene);
+}
+
+function initCardTilt(desktopPointerQuery) {
+    const card = document.querySelector('.survey-card');
+
+    if (!card) {
+        return;
+    }
+
+    card.classList.add('has-pointer-tilt');
+
+    const enableTilt = () => {
+        card.classList.add('is-tilt-ready');
+    };
+
+    const handleRevealEnd = (event) => {
+        if (event.target !== card || event.animationName !== 'cardReveal') {
+            return;
+        }
+
+        card.removeEventListener('animationend', handleRevealEnd);
+        enableTilt();
+    };
+
+    const updateTilt = (event) => {
+        if (!desktopPointerQuery.matches) {
+            return;
+        }
+
+        const bounds = card.getBoundingClientRect();
+        const normalizedX = ((event.clientX - bounds.left) / bounds.width) - 0.5;
+        const normalizedY = ((event.clientY - bounds.top) / bounds.height) - 0.5;
+        const rotateX = Math.max(-3, Math.min(3, normalizedY * -6));
+        const rotateY = Math.max(-4, Math.min(4, normalizedX * 8));
+
+        card.classList.add('is-tilt-active');
+        card.style.setProperty('--tilt-x', `${rotateX.toFixed(2)}deg`);
+        card.style.setProperty('--tilt-y', `${rotateY.toFixed(2)}deg`);
+    };
+
+    const resetTilt = () => {
+        card.classList.remove('is-tilt-active');
+        card.style.setProperty('--tilt-x', '0deg');
+        card.style.setProperty('--tilt-y', '0deg');
+    };
+
+    card.addEventListener('animationend', handleRevealEnd);
+    card.addEventListener('mousemove', updateTilt, { passive: true });
+    card.addEventListener('mouseleave', resetTilt);
+    window.setTimeout(enableTilt, 1000);
 }
 
 function collectUrlParams() {
