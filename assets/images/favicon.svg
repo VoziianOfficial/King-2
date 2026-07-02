@@ -1,0 +1,41 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <radialGradient id="bg" cx="50%" cy="35%" r="70%">
+            <stop offset="0%" stop-color="#3A1111"/>
+            <stop offset="55%" stop-color="#171716"/>
+            <stop offset="100%" stop-color="#0B0B0A"/>
+        </radialGradient>
+
+        <linearGradient id="gold" x1="12" y1="10" x2="52" y2="54">
+            <stop offset="0%" stop-color="#FFF4B0"/>
+            <stop offset="45%" stop-color="#ECD677"/>
+            <stop offset="100%" stop-color="#9B7425"/>
+        </linearGradient>
+
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2.5" result="blur"/>
+            <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+
+    <rect width="64" height="64" rx="18" fill="url(#bg)"/>
+    <rect x="2" y="2" width="60" height="60" rx="16" fill="none" stroke="#F40A0A" stroke-opacity="0.55"/>
+    <circle cx="50" cy="14" r="14" fill="#F40A0A" opacity="0.18"/>
+    <circle cx="14" cy="50" r="18" fill="#ECD677" opacity="0.08"/>
+
+    <text
+        x="50%"
+        y="53%"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        font-family="Inter, Arial, sans-serif"
+        font-size="22"
+        font-weight="900"
+        letter-spacing="-2"
+        fill="url(#gold)"
+        filter="url(#glow)"
+    >1K</text>
+</svg>
