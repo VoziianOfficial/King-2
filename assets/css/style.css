@@ -1757,3 +1757,269 @@ svg {
         padding: 10px 14px;
     }
 }
+
+/* =========================================================
+   Strong premium 1KING logo upgrade
+   ========================================================= */
+
+.brand-logo {
+    position: relative;
+    isolation: isolate;
+    overflow: visible;
+    font-size: clamp(58px, 15vw, 122px) !important;
+    font-weight: 980;
+    line-height: 0.82;
+    letter-spacing: -0.095em;
+    background:
+        linear-gradient(
+            115deg,
+            #fff8c7 0%,
+            #ecd677 24%,
+            #b8892f 48%,
+            #fff0a3 62%,
+            #ecd677 78%,
+            #8f661f 100%
+        );
+    background-size: 180% 100%;
+    background-position: 0% 50%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    text-shadow:
+        0 0 18px rgba(236, 214, 119, 0.38),
+        0 0 48px rgba(236, 214, 119, 0.2),
+        0 0 74px rgba(244, 10, 10, 0.2);
+    filter:
+        drop-shadow(0 16px 34px rgba(0, 0, 0, 0.64))
+        drop-shadow(0 0 22px rgba(244, 10, 10, 0.2));
+    animation:
+        logoReveal 760ms var(--ease-premium) both,
+        logoPremiumFloat 5200ms 900ms ease-in-out infinite,
+        logoGoldFlow 6200ms 1200ms ease-in-out infinite;
+}
+
+.brand-logo::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -28% -18% -34%;
+    border-radius: 999px;
+    background:
+        radial-gradient(circle at 50% 48%, rgba(236, 214, 119, 0.17), transparent 46%),
+        radial-gradient(circle at 50% 58%, rgba(244, 10, 10, 0.2), transparent 62%);
+    filter: blur(12px);
+    opacity: 0.86;
+    transform: scale(0.96);
+    animation: logoHaloPulse 4200ms ease-in-out infinite;
+    pointer-events: none;
+}
+
+.brand-logo::after {
+    content: "";
+    position: absolute;
+    left: 4%;
+    right: 0%;
+    bottom: -16px;
+    height: 2px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(244, 10, 10, 0.78),
+            rgba(236, 214, 119, 0.95),
+            rgba(244, 10, 10, 0.58),
+            transparent
+        );
+    box-shadow:
+        0 0 18px rgba(244, 10, 10, 0.48),
+        0 0 28px rgba(236, 214, 119, 0.24);
+    transform-origin: center;
+    animation: logoUnderlinePulse 3600ms ease-in-out infinite;
+}
+
+.survey-section {
+    gap: clamp(24px, 4vh, 42px);
+}
+
+@keyframes logoPremiumFloat {
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-5px) scale(1.018);
+    }
+}
+
+@keyframes logoGoldFlow {
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes logoHaloPulse {
+    0%,
+    100% {
+        opacity: 0.58;
+        transform: scale(0.94);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.06);
+    }
+}
+
+@keyframes logoUnderlinePulse {
+    0%,
+    100% {
+        opacity: 0.52;
+        transform: scaleX(0.72);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+}
+
+@media (min-width: 768px) {
+    .brand-logo {
+        font-size: clamp(78px, 10vw, 132px) !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    .brand-logo {
+        font-size: clamp(92px, 8.8vw, 142px) !important;
+    }
+
+    .survey-section {
+        gap: clamp(28px, 4.2vh, 46px);
+    }
+}
+
+@media (max-width: 374px) {
+    .brand-logo {
+        font-size: clamp(52px, 16vw, 62px) !important;
+        letter-spacing: -0.09em;
+    }
+
+    .brand-logo::after {
+        bottom: -12px;
+        height: 1px;
+    }
+
+    .survey-section {
+        gap: 22px;
+    }
+}
+
+@media (max-width: 767px) and (max-height: 700px) {
+    .brand-logo {
+        font-size: clamp(48px, 14vw, 64px) !important;
+    }
+
+    .survey-section {
+        gap: 18px;
+    }
+
+    .brand-logo::before {
+        inset: -20% -12% -24%;
+        filter: blur(10px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .brand-logo {
+        animation: logoReveal 1ms var(--ease-premium) both !important;
+        background-position: 50% 50%;
+    }
+
+    .brand-logo::before,
+    .brand-logo::after {
+        animation: none !important;
+    }
+}
+
+/* =========================================================
+   Logo overflow / clipping fix
+   ========================================================= */
+
+.brand-logo {
+    max-width: calc(100vw - 32px) !important;
+    padding-inline: 8px;
+    box-sizing: border-box;
+    justify-self: center;
+    text-align: center;
+    white-space: nowrap;
+    overflow: visible;
+    letter-spacing: -0.075em;
+    font-size: clamp(54px, 13vw, 112px) !important;
+}
+
+.brand-logo::before {
+    inset: -22% -8% -26%;
+    max-width: calc(100vw - 20px);
+}
+
+.brand-logo::after {
+    left: 8%;
+    right: 8%;
+    bottom: -14px;
+}
+
+.survey-section {
+    max-width: min(720px, calc(100vw - 24px));
+    overflow: visible;
+}
+
+@media (min-width: 768px) {
+    .brand-logo {
+        max-width: min(680px, calc(100vw - 48px)) !important;
+        font-size: clamp(72px, 9vw, 120px) !important;
+        letter-spacing: -0.078em;
+    }
+}
+
+@media (min-width: 1024px) {
+    .brand-logo {
+        max-width: min(720px, calc(100vw - 64px)) !important;
+        font-size: clamp(86px, 7.6vw, 128px) !important;
+    }
+}
+
+@media (max-width: 430px) {
+    .brand-logo {
+        max-width: calc(100vw - 28px) !important;
+        font-size: clamp(50px, 15vw, 66px) !important;
+        letter-spacing: -0.07em;
+        padding-inline: 6px;
+    }
+
+    .brand-logo::before {
+        inset: -18% -5% -22%;
+        filter: blur(9px);
+    }
+
+    .brand-logo::after {
+        left: 12%;
+        right: 12%;
+        bottom: -11px;
+    }
+}
+
+@media (max-width: 374px) {
+    .brand-logo {
+        max-width: calc(100vw - 24px) !important;
+        font-size: clamp(46px, 14.5vw, 56px) !important;
+        letter-spacing: -0.065em;
+    }
+}
