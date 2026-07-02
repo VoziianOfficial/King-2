@@ -18,7 +18,7 @@
 </head>
 
 <body>
-    <div class="site-shell legal-page">
+    <div class="site-shell">
         <div class="background-scene" aria-hidden="true">
             <div class="background-scene__grid"></div>
             <div class="background-scene__glow background-scene__glow--one"></div>
@@ -27,48 +27,39 @@
             <div class="background-scene__watermark">1KING</div>
         </div>
 
-        <main class="legal-main">
-            <article class="legal-card" aria-labelledby="privacy-title">
-                <div class="legal-card__content">
-                    <a class="legal-logo" href="index.html" aria-label="1KING ana sayfa">1KING</a>
+        <main class="survey-main legal-document-main">
+            <section class="survey-section legal-document-section" aria-labelledby="privacy-title">
+                <a class="brand-logo legal-document-logo" href="index.html" aria-label="1KING ana sayfa">1KING</a>
 
-                    <h1 id="privacy-title">Gizlilik Politikası</h1>
+                <article class="survey-card legal-document-card">
+                    <div class="survey-card__shine" aria-hidden="true"></div>
 
-                    <p>
-                        Bu sayfa, müşteri deneyimi anketine verilen yanıtları toplamak ve değerlendirmek için
-                        hazırlanmıştır.
-                        Paylaştığın bilgiler, hizmet deneyimini anlamak ve iletişim kalitesini geliştirmek amacıyla
-                        kullanılabilir.
-                    </p>
+                    <div class="survey-card__inner legal-document-card__inner">
+                        <p class="legal-document-kicker">Bilgilendirme</p>
 
-                    <ul class="legal-list">
-                        <li>
-                            Anket kapsamında seçtiğin yanıtlar kaydedilebilir ve müşteri deneyimi analizi için
-                            değerlendirilebilir.
-                        </li>
-                        <li>
-                            Sayfaya geliş kaynağını anlamak için URL içinde yer alan kampanya ve kaynak parametreleri
-                            saklanabilir.
-                        </li>
-                        <li>
-                            Tarayıcı türü, cihaz dili ve sayfa adresi gibi temel teknik bilgiler sistem güvenliği ve
-                            analiz amacıyla işlenebilir.
-                        </li>
-                        <li>
-                            Toplanan bilgiler, kullanıcı iletişimini daha düzenli, ilgili ve anlaşılır hale getirmek
-                            için kullanılabilir.
-                        </li>
-                    </ul>
+                        <h1 id="privacy-title" class="legal-document-title">Gizlilik Politikası</h1>
 
-                    <p>
-                        Bu bilgiler yalnızca deneyimi iyileştirmek, anket sonuçlarını değerlendirmek ve kullanıcıya daha
-                        uygun iletişim
-                        sunmak amacıyla ele alınır.
-                    </p>
+                        <div class="legal-document-copy">
+                            <p>
+                                Bu sayfa, müşteri deneyimini analiz etmek amacıyla ankette verdiğiniz yanıtları,
+                                bağlantıdaki kampanya parametrelerini ve tarayıcı dili ile kullanıcı aracısı gibi
+                                temel teknik bilgileri toplayabilir.
+                            </p>
 
-                    <a class="back-link" href="index.html">Ankete Geri Dön</a>
-                </div>
-            </article>
+                            <p>
+                                Toplanan bilgiler; hizmet kalitesini geliştirmek, geri bildirimleri değerlendirmek
+                                ve kullanıcı deneyimine göre daha uygun bilgilendirme sunmak amacıyla kullanılabilir.
+                                Anketi tamamlamanız gönüllülük esasına dayanır.
+                            </p>
+                        </div>
+
+                        <a class="legal-document-back" href="index.html">
+                            <span aria-hidden="true">←</span>
+                            Ankete dön
+                        </a>
+                    </div>
+                </article>
+            </section>
         </main>
 
         <footer class="site-footer">

@@ -18,7 +18,7 @@
 </head>
 
 <body>
-    <div class="site-shell legal-page">
+    <div class="site-shell">
         <div class="background-scene" aria-hidden="true">
             <div class="background-scene__grid"></div>
             <div class="background-scene__glow background-scene__glow--one"></div>
@@ -27,43 +27,40 @@
             <div class="background-scene__watermark">1KING</div>
         </div>
 
-        <main class="legal-main">
-            <article class="legal-card" aria-labelledby="terms-title">
-                <div class="legal-card__content">
-                    <a class="legal-logo" href="index.html" aria-label="1KING ana sayfa">1KING</a>
+        <main class="survey-main legal-document-main">
+            <section class="survey-section legal-document-section" aria-labelledby="terms-title">
+                <a class="brand-logo legal-document-logo" href="index.html" aria-label="1KING ana sayfa">1KING</a>
 
-                    <h1 id="terms-title">Kullanım Koşulları</h1>
+                <article class="survey-card legal-document-card">
+                    <div class="survey-card__shine" aria-hidden="true"></div>
 
-                    <p>
-                        Bu sayfa, 1KING müşteri deneyimi anketine katılım koşullarını açık ve anlaşılır şekilde
-                        paylaşmak için hazırlanmıştır.
-                        Anket, kullanıcı görüşlerini daha iyi anlamaya yardımcı olan kısa ve gönüllü bir deneyim
-                        formudur.
-                    </p>
+                    <div class="survey-card__inner legal-document-card__inner">
+                        <p class="legal-document-kicker">Bilgilendirme</p>
 
-                    <ul class="legal-list">
-                        <li>
-                            Ankete katılım tamamen gönüllüdür. Kullanıcı, dilediği zaman sayfadan ayrılabilir.
-                        </li>
-                        <li>
-                            Kullanıcı, her soruda kendi deneyimine en uygun yanıtı kendisi seçer.
-                        </li>
-                        <li>
-                            Son ekrandaki yönlendirme yalnızca kullanıcının butona tıklamasıyla gerçekleşir.
-                        </li>
-                        <li>
-                            Sayfa içeriği, kullanıcı deneyimini geliştirmek amacıyla zaman içinde güncellenebilir.
-                        </li>
-                    </ul>
+                        <h1 id="terms-title" class="legal-document-title">Kullanım Koşulları</h1>
 
-                    <p>
-                        Anketi kullanarak, bu sayfanın yalnızca müşteri deneyimini anlamaya ve iletişimi geliştirmeye
-                        yönelik olduğunu kabul etmiş olursun.
-                    </p>
+                        <div class="legal-document-copy">
+                            <p>
+                                Bu ankete katılım tamamen gönüllüdür. Her soruda sunulan seçenekler arasından
+                                yanıtınızı kendiniz belirlersiniz ve seçimleriniz müşteri deneyimini değerlendirmek
+                                amacıyla kullanılabilir.
+                            </p>
 
-                    <a class="back-link" href="index.html">Ankete Geri Dön</a>
-                </div>
-            </article>
+                            <p>
+                                Anket sonunda gösterilen bağlantı yeni bir sayfaya yalnızca sizin düğmeye tıklamanızla
+                                açılır. Otomatik yönlendirme yapılmaz. Sayfayı kullanmaya devam ederek bu
+                                bilgilendirmeyi
+                                okuduğunuzu kabul edersiniz.
+                            </p>
+                        </div>
+
+                        <a class="legal-document-back" href="index.html">
+                            <span aria-hidden="true">←</span>
+                            Ankete dön
+                        </a>
+                    </div>
+                </article>
+            </section>
         </main>
 
         <footer class="site-footer">

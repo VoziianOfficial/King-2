@@ -1387,3 +1387,195 @@ svg {
         animation: none !important;
     }
 }
+/* =========================================================
+   Legal document pages
+   Same visual system as the main 1KING quiz card
+   ========================================================= */
+
+.legal-document-main {
+    align-items: center;
+    justify-content: center;
+}
+
+.legal-document-section {
+    max-width: 680px;
+}
+
+.legal-document-logo {
+    text-decoration: none;
+}
+
+.survey-card.legal-document-card {
+    width: 100%;
+    max-width: 580px;
+    min-height: 410px;
+}
+
+.legal-document-card__inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    min-height: 410px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: var(--card-padding);
+}
+
+.legal-document-kicker {
+    margin: 0 0 12px;
+    color: var(--color-gold);
+    font-size: clamp(0.76rem, 2.2vw, 0.86rem);
+    font-weight: 850;
+    line-height: 1.2;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-shadow: 0 0 18px rgba(236, 214, 119, 0.24);
+}
+
+.legal-document-title {
+    margin: 0;
+    max-width: 460px;
+    color: #ffffff;
+    font-size: clamp(1.58rem, 6.2vw, 2.25rem);
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -0.055em;
+    text-wrap: balance;
+}
+
+.legal-document-copy {
+    display: grid;
+    gap: 14px;
+    margin-top: 20px;
+    max-width: 470px;
+}
+
+.legal-document-copy p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: clamp(0.94rem, 3.4vw, 1.02rem);
+    font-weight: 500;
+    line-height: 1.72;
+}
+
+.legal-document-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    margin-top: 28px;
+    padding: 11px 16px;
+    border: 1px solid rgba(236, 214, 119, 0.38);
+    border-radius: 15px;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.065), transparent 42%),
+        rgba(255, 255, 255, 0.045);
+    color: var(--color-gold);
+    font-size: 0.9rem;
+    font-weight: 850;
+    line-height: 1.2;
+    text-decoration: none;
+    box-shadow:
+        0 12px 26px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    transition:
+        transform 220ms var(--ease-premium),
+        border-color 220ms var(--ease-premium),
+        background-color 220ms var(--ease-premium),
+        box-shadow 220ms var(--ease-premium),
+        color 220ms var(--ease-premium);
+}
+
+.legal-document-back span {
+    margin-right: 8px;
+    transition: transform 220ms var(--ease-premium);
+}
+
+.legal-document-back:hover {
+    transform: translateY(-2px);
+    border-color: rgba(236, 214, 119, 0.72);
+    background-color: rgba(244, 10, 10, 0.12);
+    color: #ffffff;
+    box-shadow:
+        0 16px 32px rgba(0, 0, 0, 0.28),
+        0 0 24px rgba(244, 10, 10, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.11);
+}
+
+.legal-document-back:hover span {
+    transform: translateX(-3px);
+}
+
+.footer-nav a[aria-current="page"] {
+    color: rgba(236, 214, 119, 0.9);
+    text-shadow: 0 0 18px rgba(236, 214, 119, 0.16);
+}
+
+@media (min-width: 480px) {
+    .survey-card.legal-document-card {
+        min-height: 440px;
+    }
+
+    .legal-document-card__inner {
+        min-height: 440px;
+    }
+}
+
+@media (min-width: 768px) {
+    .survey-card.legal-document-card {
+        max-width: 600px;
+        min-height: 462px;
+    }
+
+    .legal-document-card__inner {
+        min-height: 462px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .survey-card.legal-document-card {
+        max-width: 610px;
+        min-height: 476px;
+    }
+
+    .legal-document-card__inner {
+        min-height: 476px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .survey-card.legal-document-card {
+        max-width: 620px;
+    }
+}
+
+@media (max-width: 374px) {
+    .survey-card.legal-document-card {
+        min-height: 404px;
+    }
+
+    .legal-document-card__inner {
+        min-height: 404px;
+    }
+
+    .legal-document-title {
+        font-size: 1.42rem;
+    }
+
+    .legal-document-copy {
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .legal-document-copy p {
+        font-size: 0.9rem;
+        line-height: 1.62;
+    }
+
+    .legal-document-back {
+        min-height: 44px;
+        margin-top: 22px;
+        padding: 10px 14px;
+    }
+}
