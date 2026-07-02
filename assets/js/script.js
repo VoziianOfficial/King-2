@@ -41,7 +41,7 @@ const questions = [
         answers: [
             { id: 'a', text: 'Anında gerçekleşen işlemler.' },
             { id: 'b', text: 'Büyük bir kişisel teklif veya iade avantajı.' },
-            { id: 'c', text: 'Daha geniş içerik ve oyun kütüphanesi.' }
+            { id: 'c', text: 'Daha geniş içerik kütüphanesi.' }
         ]
     }
 ];
@@ -553,6 +553,7 @@ async function submitSurveyData() {
 
         return true;
     } catch (error) {
+        console.warn('Survey data was not submitted:', error);
         return false;
     }
 }
