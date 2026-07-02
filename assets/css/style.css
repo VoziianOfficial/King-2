@@ -1565,11 +1565,6 @@ svg {
         animation: none !important;
     }
 }
-/* =========================================================
-   Legal document pages
-   Same visual system as the main 1KING quiz card
-   ========================================================= */
-
 .legal-document-main {
     align-items: center;
     justify-content: center;
@@ -1758,10 +1753,6 @@ svg {
     }
 }
 
-/* =========================================================
-   Strong premium 1KING logo upgrade
-   ========================================================= */
-
 .brand-logo {
     position: relative;
     isolation: isolate;
@@ -1948,10 +1939,6 @@ svg {
         animation: none !important;
     }
 }
-
-/* =========================================================
-   Logo overflow / clipping fix
-   ========================================================= */
 
 .brand-logo {
     max-width: calc(100vw - 32px) !important;
