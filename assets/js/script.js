@@ -1,7 +1,7 @@
 'use strict';
 
-const GOOGLE_SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
-const FINAL_CTA_URL = '#';
+const GOOGLE_SCRIPT_URL = 'PASTE_CLIENT_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+const FINAL_CTA_URL = 'PASTE_CLIENT_FINAL_CTA_URL_HERE';
 const LOADING_DURATION = 3000;
 const QUESTION_TRANSITION_DELAY = 180;
 const REDUCED_MOTION_LOADING_DURATION = 250;
@@ -244,13 +244,7 @@ function showFinalScreen() {
     clearLoadingStatusTimer();
 
     const safeFinalUrl = getSafeHttpUrl(FINAL_CTA_URL);
-    const ctaMarkup = safeFinalUrl
-        ? `<a class="final-cta" href="${escapeHtml(safeFinalUrl)}" data-final-cta>
-                <span>Kişisel Teklifimi Görüntüle</span>
-            </a>`
-        : `<button class="final-cta is-disabled" type="button" disabled aria-disabled="true">
-                <span>Kişisel Teklifimi Görüntüle</span>
-            </button>`;
+    const ctaHref = safeFinalUrl || '#';
 
     quizRoot.setAttribute('aria-busy', 'false');
     quizRoot.innerHTML = `
@@ -269,9 +263,22 @@ function showFinalScreen() {
                 Cevaplarına göre sana özel bir teklif hazırlandı. Devam ederek kişisel avantajını görüntüleyebilirsin.
             </p>
 
-            ${ctaMarkup}
+            <a class="final-cta" href="${escapeHtml(ctaHref)}" data-final-cta>
+                <span>Kişisel Teklifimi Görüntüle</span>
+            </a>
         </div>
     `;
+
+    if (!safeFinalUrl) {
+        const finalCta = quizRoot.querySelector('[data-final-cta]');
+
+        if (finalCta) {
+            finalCta.addEventListener('click', (event) => {
+                event.preventDefault();
+                console.warn('Final CTA URL is not configured yet.');
+            });
+        }
+    }
 
     focusViewHeading(quizRoot);
 }
@@ -460,13 +467,15 @@ function buildPayload() {
 }
 
 async function submitSurveyData() {
+    const payload = buildPayload();
     const scriptUrl = getSafeHttpUrl(GOOGLE_SCRIPT_URL);
 
     if (!scriptUrl) {
+        console.warn('Google Apps Script URL is not configured yet. Survey payload:', payload);
         return false;
     }
 
-    const body = JSON.stringify(buildPayload());
+    const body = JSON.stringify(payload);
 
     try {
         await fetch(scriptUrl, {
@@ -491,7 +500,7 @@ function getSafeHttpUrl(value) {
         typeof value !== 'string'
         || !value.trim()
         || value.trim() === '#'
-        || value === 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE'
+        || isPlaceholderUrl(value)
     ) {
         return '';
     }
@@ -503,6 +512,10 @@ function getSafeHttpUrl(value) {
     } catch (error) {
         return '';
     }
+}
+
+function isPlaceholderUrl(value) {
+    return typeof value === 'string' && value.includes('PASTE_CLIENT_');
 }
 
 function focusViewHeading(root) {
