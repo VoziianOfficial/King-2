@@ -3,8 +3,8 @@
 const GOOGLE_SCRIPT_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
 const FINAL_CTA_URL = '#';
 const LOADING_DURATION = 3000;
-
 const QUESTION_TRANSITION_DELAY = 420;
+const REDUCED_MOTION_LOADING_DURATION = 250;
 
 const questions = [
     {
@@ -41,19 +41,22 @@ const questions = [
 
 let currentStep = 0;
 const answers = {};
+let isTransitioning = false;
+
+const prefersReducedMotion = typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function initSurvey() {
     const quizRoot = document.getElementById('quiz-root');
 
     if (!quizRoot) {
-        console.warn('Survey root element was not found.');
         return;
     }
 
-    renderQuestion();
+    renderQuestion(false);
 }
 
-function renderQuestion() {
+function renderQuestion(shouldMoveFocus) {
     const quizRoot = document.getElementById('quiz-root');
     const currentQuestion = questions[currentStep];
 
@@ -97,7 +100,15 @@ function renderQuestion() {
 
     quizRoot.innerHTML = `
         <div class="quiz-view" data-view="question">
-            <div class="step-area" aria-label="Anket ilerlemesi">
+            <div
+                class="step-area"
+                role="progressbar"
+                aria-label="Anket ilerlemesi"
+                aria-valuemin="1"
+                aria-valuemax="${questions.length}"
+                aria-valuenow="${currentQuestion.step}"
+                aria-valuetext="Adım ${currentQuestion.step} / ${questions.length}"
+            >
                 <div class="step-meta">
                     <span class="step-label">Adım ${currentQuestion.step} / ${questions.length}</span>
                     <span class="step-dots" aria-hidden="true">${dotsMarkup}</span>
@@ -110,10 +121,10 @@ function renderQuestion() {
 
             <div class="question-block">
                 <p class="question-kicker">Müşteri deneyimi</p>
-                <h2 class="question-title">${escapeHtml(currentQuestion.question)}</h2>
+                <h2 id="current-question-title" class="question-title" tabindex="-1">${escapeHtml(currentQuestion.question)}</h2>
             </div>
 
-            <div class="answers-list">
+            <div class="answers-list" role="group" aria-labelledby="current-question-title">
                 ${answersMarkup}
             </div>
         </div>
@@ -134,14 +145,20 @@ function renderQuestion() {
             handleAnswerClick(questionId, selectedAnswer);
         });
     });
+
+    if (shouldMoveFocus) {
+        focusViewHeading(quizRoot);
+    }
 }
 
 function handleAnswerClick(questionId, answer) {
     const quizRoot = document.getElementById('quiz-root');
 
-    if (!quizRoot) {
+    if (!quizRoot || isTransitioning) {
         return;
     }
+
+    isTransitioning = true;
 
     const buttons = quizRoot.querySelectorAll('.answer-button');
 
@@ -163,18 +180,19 @@ function handleAnswerClick(questionId, answer) {
     if (!isLastQuestion) {
         window.setTimeout(() => {
             currentStep += 1;
-            renderQuestion();
-        }, QUESTION_TRANSITION_DELAY);
+            isTransitioning = false;
+            renderQuestion(true);
+        }, prefersReducedMotion ? 0 : QUESTION_TRANSITION_DELAY);
 
         return;
     }
 
-    submitSurveyData();
+    void submitSurveyData();
     showLoadingScreen();
 
     window.setTimeout(() => {
         showFinalScreen();
-    }, LOADING_DURATION);
+    }, prefersReducedMotion ? REDUCED_MOTION_LOADING_DURATION : LOADING_DURATION);
 }
 
 function showLoadingScreen() {
@@ -184,17 +202,23 @@ function showLoadingScreen() {
         return;
     }
 
+    quizRoot.setAttribute('aria-busy', 'true');
     quizRoot.innerHTML = `
         <div class="quiz-view loading-view" data-view="loading">
             <div class="loading-orb" aria-hidden="true"></div>
 
-            <h2 class="loading-title">Sizin için en iyi teklifi hazırlıyoruz...</h2>
+            <h2 class="loading-title" tabindex="-1">Sizin için en iyi teklifi hazırlıyoruz...</h2>
 
             <div class="loading-progress" aria-hidden="true">
                 <div class="loading-progress__fill"></div>
             </div>
         </div>
     `;
+
+    window.requestAnimationFrame(() => {
+        quizRoot.setAttribute('aria-busy', 'false');
+    });
+    focusViewHeading(quizRoot);
 }
 
 function showFinalScreen() {
@@ -204,10 +228,16 @@ function showFinalScreen() {
         return;
     }
 
-    const safeFinalUrl = typeof FINAL_CTA_URL === 'string' && FINAL_CTA_URL.trim()
-        ? FINAL_CTA_URL.trim()
-        : '#';
+    const safeFinalUrl = getSafeHttpUrl(FINAL_CTA_URL);
+    const ctaMarkup = safeFinalUrl
+        ? `<a class="final-cta" href="${escapeHtml(safeFinalUrl)}" data-final-cta>
+                <span>Kişisel Teklifimi Görüntüle</span>
+            </a>`
+        : `<button class="final-cta is-disabled" type="button" disabled aria-disabled="true">
+                <span>Kişisel Teklifimi Görüntüle</span>
+            </button>`;
 
+    quizRoot.setAttribute('aria-busy', 'false');
     quizRoot.innerHTML = `
         <div class="quiz-view final-view" data-view="final">
             <div class="final-badge" aria-hidden="true">
@@ -216,29 +246,17 @@ function showFinalScreen() {
                 </svg>
             </div>
 
-            <h2 class="final-title">Teşekkürler!</h2>
+            <h2 class="final-title" tabindex="-1">Teşekkürler!</h2>
 
             <p class="final-text">
                 Cevaplarına göre sana özel bir teklif hazırlandı. Devam ederek kişisel avantajını görüntüleyebilirsin.
             </p>
 
-            <a class="final-cta" href="${escapeHtml(safeFinalUrl)}" data-final-cta>
-                <span>Kişisel Teklifimi Görüntüle</span>
-            </a>
+            ${ctaMarkup}
         </div>
     `;
 
-    const finalCta = quizRoot.querySelector('[data-final-cta]');
-
-    if (!finalCta) {
-        return;
-    }
-
-    finalCta.addEventListener('click', (event) => {
-        if (safeFinalUrl === '#') {
-            event.preventDefault();
-        }
-    });
+    focusViewHeading(quizRoot);
 }
 
 function collectUrlParams() {
@@ -277,36 +295,78 @@ function buildPayload() {
 }
 
 async function submitSurveyData() {
-    const isPlaceholderUrl = GOOGLE_SCRIPT_URL === 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
-    const isEmptyUrl = typeof GOOGLE_SCRIPT_URL !== 'string' || GOOGLE_SCRIPT_URL.trim() === '';
+    const scriptUrl = getSafeHttpUrl(GOOGLE_SCRIPT_URL);
 
-    if (isPlaceholderUrl || isEmptyUrl) {
-        console.warn('Google Apps Script URL is not configured. Survey payload was not sent.');
+    if (!scriptUrl) {
+        return false;
+    }
+
+    const body = JSON.stringify(buildPayload());
+
+    try {
+        await fetch(scriptUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            cache: 'no-store',
+            keepalive: true,
+            headers: {
+                'Content-Type': 'text/plain;charset=UTF-8'
+            },
+            body
+        });
+
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+function getSafeHttpUrl(value) {
+    if (
+        typeof value !== 'string'
+        || !value.trim()
+        || value.trim() === '#'
+        || value === 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE'
+    ) {
+        return '';
+    }
+
+    try {
+        const url = new URL(value.trim(), window.location.href);
+
+        return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : '';
+    } catch (error) {
+        return '';
+    }
+}
+
+function focusViewHeading(root) {
+    const heading = root.querySelector('h2[tabindex="-1"]');
+
+    if (!heading) {
         return;
     }
 
-    const payload = buildPayload();
-
-    try {
-        await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
-    } catch (error) {
-        console.warn('Survey payload could not be sent.', error);
-    }
+    window.requestAnimationFrame(() => {
+        try {
+            heading.focus({ preventScroll: true });
+        } catch (error) {
+            heading.focus();
+        }
+    });
 }
 
 function escapeHtml(value) {
     return String(value)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
-document.addEventListener('DOMContentLoaded', initSurvey);
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSurvey, { once: true });
+} else {
+    initSurvey();
+}
